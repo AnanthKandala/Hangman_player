@@ -13,7 +13,7 @@ import os
 
 if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    training_file = '/orange/physics-dept/an.kandala/coding_projects/Deep_learning_projects/hang_man/words_250000_train.txt'
+    training_file = '' #training file containing words 
     training_dataset = WordDataset(training_file, 16, device)
 
     torch.set_float32_matmul_precision('high')
