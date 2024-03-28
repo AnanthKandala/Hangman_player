@@ -13,7 +13,7 @@ import os
 
 if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    training_file = '' #training file containing words 
+    training_file = '/orange/physics-dept/an.kandala/coding_projects/Deep_learning_projects/hang_man/words_250000_train.txt'
     training_dataset = WordDataset(training_file, 16, device)
 
     torch.set_float32_matmul_precision('high')
@@ -21,9 +21,9 @@ if __name__ == '__main__':
     num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     
     train_dataloader = DataLoader(training_dataset, batch_size=2048)
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)#, betas = (0.9, 0.98), eps = 1.0e-9)
-    scheduler = Scheduler(optimizer, model.embedding_dim, 20)
-    # scheduler = None
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)#betas = (0.9, 0.98), eps = 1.0e-9)
+    # scheduler = Scheduler(optimizer, model.embedding_dim, 20)
+    scheduler = None
     loss_func = nn.KLDivLoss(reduction='batchmean')
     def train(num_epochs, scheduler=None):
         model.train()
@@ -66,6 +66,16 @@ if __name__ == '__main__':
             if epoch%20 == 0:
                     torch.save(model, f'model_{epoch}.pth')
     # print(scheduler)
-    train(100, scheduler)
+    train(500, scheduler)
     torch.save(model, 'model.pth')
+    
+    #plot the loss:
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    ax.plot(training_loss)
+    ax.set_xlabel('epoch')
+    ax.set_ylabel('loss')
+    ax.set_title('Training Loss')
+    ax.set_yscale('log')
+    fig.savefig('training_loss.png')
     
